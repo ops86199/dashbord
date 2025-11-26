@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animated Analytics Dashboard - Super Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f2027, #2c5364, #f7971e);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-top: 30px;
+      margin-bottom: 8px;
+      font-size: 2.3rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.20);
+    }
+    .flex-row {
+      display: flex;
+      gap: 18px;
+      width: 95vw;
+      max-width: 1300px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(210px, 1fr));
+      gap: 28px 24px;
+      margin: 25px 0;
+      margin-bottom: 6px;
+      max-width: 900px;
+      width: 900px;
+      justify-items: center;
+    }
+    .meter-card {
+      background: linear-gradient(120deg,#43cea2,#185a9d);
+      border-radius: 14px;
+      padding: 26px 16px 14px 16px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+      width: 100%;
+      max-width: 245px;
+      position: relative;
+    }
+    .meter-title {
+      font-size: 1.12rem;
+      font-weight: bold;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+    .gauge {
+      width: 93px;
+      height: 93px;
+      margin: 0 auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gauge svg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 93px; height: 93px;
+      z-index: 2;
+    }
+    .gauge-text {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #FFE400;
+      text-shadow: 0 2px 6px #888;
+    }
+    .gauge-bg {
+      stroke: #eee;
+      stroke-width: 12;
+    }
+    .gauge-fg {
+      stroke-width: 12;
+      stroke-linecap: round;
+      filter: drop-shadow(0 2px 9px #00fff2);
+      transition: stroke-dasharray 0.44s cubic-bezier(.44,2,.45,.89);
+    }
+    /* meter color themes */
+    .memory .gauge-fg { stroke: #60f; }
+    .network .gauge-fg { stroke: #09f; }
+    .download .gauge-fg { stroke: #29ff7a; }
+    .upload .gauge-fg { stroke: #FFE400; }
+    .cpu .gauge-fg { stroke: #FC354C; }
+    .disk .gauge-fg { stroke: #16C3B7; }
+
+    .value-label {
+      margin-top: 7px;
+      font-size: 0.95rem;
+      color: #fff;
+      opacity: 0.82;
+    }
+    .info-box {
+      background: linear-gradient(90deg, #fff700 50%, #f7971e 100%);
+      color: #222;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 4px 14px rgba(99,99,0,.10);
+      padding: 10px 24px;
+      margin-bottom: 14px;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      align-items: center;
+      display: flex;
+      gap: 9px;
+      margin-top: -4px;
+    }
+    .info-tag {
+      background: #2c5364;
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: .93rem;
+      font-weight: normal;
+      margin-left: 7px;
+      box-shadow: 0 2px 3px #8882;
+    }
+    /* Alerts box */
+    .alerts-box {
+      background:#222b;
+      border-radius:10px;
+      padding:14px 16px;
+      width:290px;
+      margin-bottom:10px;
+      box-shadow:0 2px 9px #0002;
+    }
+    .alerts-title {
+      font-weight:bold;
+      font-size:1rem;
+      margin-bottom:6px;
+    }
+    .alert {
+      display:flex;
+      align-items:center;
+      font-size:.97rem;
+      margin-bottom:5px;
+      padding:6px 8px;
+      border-radius:6px;
+      box-shadow:0 1px 5px #0001;
+      background: linear-gradient(90deg,#FFE40033 0%,#43cea222 60%,#2c536488 100%);
+    }
+    .alert-icon {
+      font-size:1.15rem;
+      margin-right:8px;
+    }
+    /* Users table */
+    .users-box {
+      background:#fff5;
+      padding:10px 18px;
+      border-radius:12px;
+      box-shadow:0 2px 14px #2223;
+      width:290px;
+      margin-bottom:30px;
+    }
+    .users-title {
+      font-weight:bold;
+      font-size:1rem;
+      margin-bottom:7px;
+    }
+    table {
+      width:100%;
+      border-collapse:collapse;
+      color:#222;
+      background:none;
+      margin-bottom:5px;
+    }
+    th, td {
+      padding:3px 7px;
+      border:none;
+      font-size:.95rem;
+    }
+    th {
+      color:#fff;
+      background:#2c5364ee;
+      font-weight:600;
+    }
+    tr:nth-child(even) { background: #fff6; }
+    tr:nth-child(odd) { background: #f7971e33; }
+  </style>
+</head>
+<body>
+  <h1>Animated Admin Analytics Dashboard</h1>
+  <div class="info-box">
+    System Uptime: <span id="uptime" class="info-tag">0h 00m 00s</span>
+  </div>
+  <div class="flex-row">
+    <div>
+      <!-- Recent Alerts -->
+      <div class="alerts-box">
+        <div class="alerts-title">Recent Alerts</div>
+        <div id="alerts-list"></div>
+      </div>
+      <!-- Active Users Table -->
+      <div class="users-box">
+        <div class="users-title">Active Users</div>
+        <table id="users-table">
+          <thead>
+            <tr><th>Name</th><th>Role</th><th>Status</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="dashboard">
+      <div class="meter-card memory">
+        <div class="meter-title">Memory Usage</div>
+        <div class="gauge" id="gauge-memory">
+          <svg>
+            <circle class="gauge-bg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+            <circle class="gauge-fg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+          </svg>
+          <span class="gauge-text">0%</span>
+        </div>
+        <div class="value-label">Used memory</div>
+      </div>
+      <div class="meter-card cpu">
+        <div class="meter-title">CPU Usage</div>
+        <div class="gauge" id="gauge-cpu">
+          <svg>
+            <circle class="gauge-bg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+            <circle class="gauge-fg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+          </svg>
+          <span class="gauge-text">0%</span>
+        </div>
+        <div class="value-label">Active cores</div>
+      </div>
+      <div class="meter-card disk">
+        <div class="meter-title">Disk Usage</div>
+        <div class="gauge" id="gauge-disk">
+          <svg>
+            <circle class="gauge-bg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+            <circle class="gauge-fg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+          </svg>
+          <span class="gauge-text">0%</span>
+        </div>
+        <div class="value-label">Active storage</div>
+      </div>
+      <div class="meter-card network">
+        <div class="meter-title">Network Speed</div>
+        <div class="gauge" id="gauge-network">
+          <svg>
+            <circle class="gauge-bg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+            <circle class="gauge-fg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+          </svg>
+          <span class="gauge-text">0 Mbps</span>
+        </div>
+        <div class="value-label">Total bandwidth</div>
+      </div>
+      <div class="meter-card download">
+        <div class="meter-title">Download Speed</div>
+        <div class="gauge" id="gauge-download">
+          <svg>
+            <circle class="gauge-bg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+            <circle class="gauge-fg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+          </svg>
+          <span class="gauge-text">0 Mbps</span>
+        </div>
+        <div class="value-label">Current download</div>
+      </div>
+      <div class="meter-card upload">
+        <div class="meter-title">Upload Speed</div>
+        <div class="gauge" id="gauge-upload">
+          <svg>
+            <circle class="gauge-bg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+            <circle class="gauge-fg" cx="46.5" cy="46.5" r="36.5" fill="none" />
+          </svg>
+          <span class="gauge-text">0 Mbps</span>
+        </div>
+        <div class="value-label">Current upload</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Animate meter change
+    function animateGauge(circle, value, max=100) {
+      const radius = circle.r.baseVal.value;
+      const circumference = 2 * Math.PI * radius;
+      let percent = Math.min(Math.max(value / max, 0), 1);
+      circle.style.strokeDasharray = `${circumference * percent} ${circumference * (1 - percent)}`;
+    }
+    // Update gauge
+    function updateGauge(gaugeEl, value, max, unit='%', fractionDigits=0) {
+      const fg = gaugeEl.querySelector('.gauge-fg');
+      animateGauge(fg, value, max);
+      const text = gaugeEl.querySelector('.gauge-text');
+      text.textContent = `${value.toFixed(fractionDigits)}${unit}`;
+    }
+    // Uptime simulator
+    let uptimeSecs = 0;
+    function updateUptime() {
+      uptimeSecs++;
+      let h = Math.floor(uptimeSecs / 3600);
+      let m = Math.floor((uptimeSecs % 3600) / 60);
+      let s = uptimeSecs % 60;
+      document.getElementById('uptime').textContent =
+        h+'h '+m.toString().padStart(2,'0')+'m '+s.toString().padStart(2,'0')+'s';
+    }
+    // Fetch live stats from backend every 2s
+    setInterval(() => {
+      fetch('/api/stats')
+        .then(res => res.json())
+        .then(stats => {
+          updateGauge(document.getElementById('gauge-memory'), stats.memory, 100, '%', 0);
+          updateGauge(document.getElementById('gauge-cpu'), stats.cpu, 100, '%', 0);
+          updateGauge(document.getElementById('gauge-disk'), stats.disk, 100, '%', 0);
+          updateGauge(document.getElementById('gauge-network'), stats.network, 500, ' Mbps', 1);
+          updateGauge(document.getElementById('gauge-download'), stats.download, 100, ' Mbps', 1);
+          updateGauge(document.getElementById('gauge-upload'), stats.upload, 50, ' Mbps', 1);
+        });
+    }, 2000);
+    // Fetch users table every 6s
+    setInterval(() => {
+      fetch('/api/users')
+        .then(res => res.json())
+        .then(users => {
+          const table = document.getElementById('users-table').querySelector('tbody');
+          table.innerHTML = '';
+          for (let user of users) {
+            table.innerHTML += `<tr><td>${user.name}</td><td>${user.role}</td><td>${user.status}</td></tr>`;
+          }
+        });
+    }, 6000);
+    // Fetch alerts every 3.5s
+    setInterval(() => {
+      fetch('/api/alerts')
+        .then(res => res.json())
+        .then(alerts => {
+          const alertsList = document.getElementById('alerts-list');
+          alertsList.innerHTML = '';
+          for (let alert of alerts) {
+            let alertEl = document.createElement('div');
+            alertEl.className = 'alert';
+            alertEl.innerHTML = `<span class="alert-icon">${alert.icon}</span>${alert.text}`;
+            alertsList.appendChild(alertEl);
+          }
+        });
+    }, 3500);
+    // Start meters and uptime when page loads
+    window.onload = () => {
+      document.querySelectorAll('.gauge-fg').forEach(c => {
+        c.style.strokeDasharray = "0 320";
+      });
+      updateUptime();
+      setInterval(updateUptime, 1000);
+    };
+  </script>
+</body>
+</html>
