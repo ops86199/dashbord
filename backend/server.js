@@ -50,7 +50,7 @@ app.get('/api/alerts', (req, res) => {
   res.json(alerts);
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 30000;
 app.listen(PORT, () => {
   console.log(`Dashboard running at http://localhost:${PORT}`);
 });
