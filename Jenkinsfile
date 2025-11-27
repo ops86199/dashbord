@@ -4,8 +4,8 @@ pipeline {
   environment {
     DOCKERHUB_USER = 'your-dockerhub-username'
     DOCKERHUB_PASS = 'your-dockerhub-password' // For security, store in Jenkins credentials instead!
-    IMAGE_REPO = 'your-dockerhub-username/dashboard-fullstack'
-    IMAGE_TAG = "latest"
+    IMAGE_REPO = 'your-dockerhub-username/dashboard-app'
+    IMAGE_TAG = "v0.1."
   }
 
   stages {
