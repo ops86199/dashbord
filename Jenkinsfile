@@ -17,7 +17,9 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh "docker build -t ${IMAGE_REPO}:${IMAGE_TAG} ."
+        sh "
+        docker rmi -f your-dockerhub-username/dashboard-app:v0.1|| true
+        docker build -t ${IMAGE_REPO}:${IMAGE_TAG} ."
       }
     }
 
