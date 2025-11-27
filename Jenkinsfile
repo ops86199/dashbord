@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     DOCKER_USER = "your-dockerhub-username"
-    IMAGE_REPO = "your-dockerhub-username/dashboard-app"
+    IMAGE_REPO = "ops86199/dashboard-app"
     IMAGE_TAG = "v0.1"
   }
 
