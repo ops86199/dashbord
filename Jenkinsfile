@@ -17,10 +17,10 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh "
+        sh """
         docker rmi -f ${IMAGE_REPO}:${IMAGE_TAG} || true
         docker build -t ${IMAGE_REPO}:${IMAGE_TAG} .
-        "
+        """
       }
     }
 
