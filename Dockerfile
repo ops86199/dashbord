@@ -1,10 +1,19 @@
 FROM node:18-alpine
 
 WORKDIR /app
-COPY backend/package.json backend/server.js ./backend/
-COPY public/index.html ./public/
 
+# Copy backend
+COPY backend/package.json backend/server.js ./backend/
+
+# Copy entire frontend folder
+COPY public ./public
+
+# Install backend dependencies
 RUN cd backend && npm install
 
-EXPOSE 8081
+# Expose the correct port
+EXPOSE 30000
+
+# Start backend server
 CMD ["node", "backend/server.js"]
+
